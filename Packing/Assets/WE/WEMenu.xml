@@ -1,0 +1,33 @@
+<StackPanelWidget Name="RightControlsContainer" Direction="Vertical" HorizontalAlignment="Far" VerticalAlignment="Near" IsHitTestVisible="false">
+    <StackPanelWidget Direction="Horizontal" HorizontalAlignment="Far" xmlns="runtime-namespace:Game">
+        <StackPanelWidget Name="WorldEditMenuContainerTop" Direction="Horizontal" HorizontalAlignment="Far" IsVisible="true" Margin="4, 3">
+                <BitmapButtonWidget Name="F1" Text="" Size="68, 64" NormalSubtexture="{Textures/Atlas/PhotoButton}" ClickedSubtexture="{Textures/Atlas/PhotoButton_Pressed}" Margin="4, 0" />
+                <BitmapButtonWidget Name="F2" Text="" Size="68, 64" NormalSubtexture="{Textures/Atlas/PhotoButton}" ClickedSubtexture="{Textures/Atlas/PhotoButton_Pressed}" Margin="4, 0" />
+                <BitmapButtonWidget Name="F3" Text="" Size="68, 64" NormalSubtexture="{Textures/Atlas/PhotoButton}" ClickedSubtexture="{Textures/Atlas/PhotoButton_Pressed}" Margin="4, 0" />
+        </StackPanelWidget>
+        <BitmapButtonWidget Name="WorldEditMenu" HorizontalAlignment="Far" Text="" Size="64, 64" NormalSubtexture="{Textures/Atlas/MoreButton}" ClickedSubtexture="{Textures/Atlas/MoreButton_Pressed}" Margin="0, 3" IsAutoCheckingEnabled="true" />
+    </StackPanelWidget>
+    <StackPanelWidget Name="WorldEditMenuContainerBottom" Direction="Vertical" HorizontalAlignment="Far" VerticalAlignment="Near" IsHitTestVisible="false" xmlns="runtime-namespace:Game">
+        <StackPanelWidget Name="WorldEditMenuContainer1" Direction="Horizontal" HorizontalAlignment="Far" IsVisible="true" Margin="0, 3">
+            <BitmapButtonWidget Name="F5" Text="" Size="68, 64" NormalSubtexture="{Textures/Atlas/LightningButton}" ClickedSubtexture="{Textures/Atlas/LightningButton_Pressed}" IsAutoCheckingEnabled="true" Margin="4, 0" />
+            <BitmapButtonWidget Name="F6" Text="" Size="68, 64" NormalSubtexture="{Textures/Atlas/LightningButton}" ClickedSubtexture="{Textures/Atlas/LightningButton_Pressed}" Margin="4, 0" />
+            <BitmapButtonWidget Name="F7" Text="" Size="68, 64" NormalSubtexture="{Textures/Atlas/LightningButton}" ClickedSubtexture="{Textures/Atlas/LightningButton_Pressed}" Margin="4, 0" />
+            <BitmapButtonWidget Name="F8" Text="" Size="68, 64" NormalSubtexture="{Textures/Atlas/LightningButton}" ClickedSubtexture="{Textures/Atlas/LightningButton_Pressed}" Margin="0, 0" />                
+        </StackPanelWidget>
+    
+        <StackPanelWidget Name="WorldEditMenuContainer2" Direction="Horizontal" HorizontalAlignment="Far" IsVisible="true" Margin="0, 3">
+           
+            <BitmapButtonWidget Name="F9" Text="" Size="68, 64" NormalSubtexture="{Textures/Atlas/LightningButton}" ClickedSubtexture="{Textures/Atlas/LightningButton_Pressed}" Margin="4, 0" />
+            <BitmapButtonWidget Name="F10" Text="" Size="68, 64" NormalSubtexture="{Textures/Atlas/LightningButton}" ClickedSubtexture="{Textures/Atlas/LightningButton_Pressed}" Margin="4, 0" />
+            <BitmapButtonWidget Name="F11" Text="" Size="68, 64" NormalSubtexture="{Textures/Atlas/LightningButton}" ClickedSubtexture="{Textures/Atlas/LightningButton_Pressed}" Margin="4, 0" />
+            <BitmapButtonWidget Name="F12" Text="" Size="68, 64" NormalSubtexture="{Textures/Atlas/LightningButton}" ClickedSubtexture="{Textures/Atlas/LightningButton_Pressed}" Margin="4, 0" />
+            
+        </StackPanelWidget>
+        
+        <StackPanelWidget Name="WorldEditMenuContainer3" Direction="Horizontal" HorizontalAlignment="Far" IsVisible="true" Margin="144, 3">
+        </StackPanelWidget>
+        
+        <StackPanelWidget Name="WorldEditMenuContainer3" Direction="Horizontal" HorizontalAlignment="Far" IsVisible="true" Margin="144, 3">
+        </StackPanelWidget>
+    </StackPanelWidget>
+</StackPanelWidget>

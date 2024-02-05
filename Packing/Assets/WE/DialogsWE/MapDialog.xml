@@ -1,0 +1,99 @@
+<CanvasWidget xmlns="runtime-namespace:Game">
+
+  <CanvasWidget Size="700, 600" ClampToBounds="true" HorizontalAlignment="Center" VerticalAlignment="Center">
+    <RectangleWidget FillColor="0, 0, 0, 255" OutlineColor="128, 128, 128, 128" OutlineThickness="2" />
+    <StackPanelWidget Direction="Vertical" HorizontalAlignment="Center" VerticalAlignment="Near" Margin="15, 15">    
+    
+	  
+	  
+	 <UniformSpacingPanelWidget Direction="Horizontal" Margin="0, 1">
+        <LabelWidget Text="Map Resolution:" Font="{Fonts/Pericles}" Color="128, 128, 128" HorizontalAlignment="Far" VerticalAlignment="Center" Margin="20, 0" />
+        <StackPanelWidget Direction="Horizontal" Margin="20, 0">
+          <LabelWidget Name="Img_Dialog.type_cr_text" Text="Holow" Font="{Fonts/Pericles}" VerticalAlignment="Center" />
+          <CanvasWidget Size="20, 0" />
+          <BevelledButtonWidget Name="Img_Dialog.type_cr_btn" Style="{Styles/ButtonStyle_70x60}" Text="..." VerticalAlignment="Center" />
+        </StackPanelWidget>
+      </UniformSpacingPanelWidget>
+       
+	   <CanvasWidget Size="0, 8" />
+	
+	   <StackPanelWidget Direction="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <CanvasWidget Size="180, -1" VerticalAlignment="Center">
+            <LabelWidget Name="Img_Dialog.resize_txt" Text="Resize" Font="{Fonts/Pericles}" HorizontalAlignment="Center"/>
+          </CanvasWidget>
+          <SliderWidget Name="Img_Dialog.resize_sl" VerticalAlignment="Center" LabelWidth="120" />
+        </StackPanelWidget>
+        
+     	<CanvasWidget Size="0, 8" />
+     
+		<StackPanelWidget Direction="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <CanvasWidget Size="180, -1" VerticalAlignment="Center">
+            <LabelWidget Name="Img_Dialog.furn_res_txt" Text="Furniture Size" Font="{Fonts/Pericles}" HorizontalAlignment="Center"/>
+          </CanvasWidget>
+          <SliderWidget Name="Img_Dialog.furn_res_sl" VerticalAlignment="Center" LabelWidth="120" />
+        </StackPanelWidget> 
+		
+		<CanvasWidget Size="0, 8" />
+		
+		 <StackPanelWidget Direction="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <CanvasWidget Size="180, -1" VerticalAlignment="Center">
+            <LabelWidget Name="Img_Dialog.deep" Text="Custom Palette Colors" Font="{Fonts/Pericles}" HorizontalAlignment="Center"/>
+          </CanvasWidget>
+          <SliderWidget Name="Img_Dialog.Slider_deep" VerticalAlignment="Center" LabelWidth="120" />
+        </StackPanelWidget>
+		
+		<CanvasWidget Size="0, 8" />
+		
+		 <StackPanelWidget Direction="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <CanvasWidget Size="180, -1" VerticalAlignment="Center">
+            <LabelWidget Name="Img_Dialog.ofst_txt" Text="Palette offset" Font="{Fonts/Pericles}" HorizontalAlignment="Center"/>
+          </CanvasWidget>
+          <SliderWidget Name="Img_Dialog.ofst_sl" VerticalAlignment="Center" LabelWidth="120" />
+        </StackPanelWidget>
+		
+		<CanvasWidget Size="0, 8" />
+		
+	  <UniformSpacingPanelWidget Direction="Horizontal" Margin="0, 0">
+        <LabelWidget Text="Orientation:" Font="{Fonts/Pericles}" Color="128, 128, 128" HorizontalAlignment="Far" VerticalAlignment="Center" Margin="10, 0" />
+        <StackPanelWidget Direction="Horizontal" Margin="10, 0">
+          <LabelWidget Name="Img_Dialog.pos_txt" Text="Flat" Font="{Fonts/Pericles}" VerticalAlignment="Center" />
+          <CanvasWidget Size="10, 0" />
+          <BevelledButtonWidget Name="Img_Dialog.pos_sel" Style="{Styles/ButtonStyle_70x60}" Text="..." VerticalAlignment="Center" />
+        </StackPanelWidget>
+      </UniformSpacingPanelWidget>  
+
+     <CanvasWidget Size="0, 8" />
+				  
+	  <UniformSpacingPanelWidget Direction="Horizontal" Margin="0, 1">
+        <LabelWidget Text="Rotation:" Font="{Fonts/Pericles}" Color="128, 128, 128" HorizontalAlignment="Far" VerticalAlignment="Center" Margin="20, 0" />
+        <StackPanelWidget Direction="Horizontal" Margin="20, 0">
+          <LabelWidget Name="Img_Dialog.rot_txt" Text="Left:" Font="{Fonts/Pericles}" VerticalAlignment="Center" />
+          <CanvasWidget Size="20, 0" />
+          <BevelledButtonWidget Name="Img_Dialog.rot_sel" Style="{Styles/ButtonStyle_70x60}" Text="..." VerticalAlignment="Center" />
+        </StackPanelWidget>
+      </UniformSpacingPanelWidget>
+				  
+      <StackPanelWidget Direction="Horizontal" Margin="0, 1">
+          <LabelWidget Text="Mirror" Font="{Fonts/Pericles}"  Color="128, 128, 128" Margin="0, 1" VerticalAlignment="Center"/>
+          <CanvasWidget Size="20, 0" />
+          <CheckboxWidget Name="Img_Dialog.mirror" CheckboxSize="32, 32"  Margin="0, 1" VerticalAlignment="Center"/>
+      </StackPanelWidget>
+      
+      <CanvasWidget Size="0, 8" />
+		      
+      <StackPanelWidget Direction="Horizontal" Margin="0, 1">
+          <LabelWidget Text="Change palette" Font="{Fonts/Pericles}"  Color="128, 128, 128" Margin="0, 1" VerticalAlignment="Center"/>
+          <CanvasWidget Size="20, 0" />
+          <CheckboxWidget Name="Img_Dialog.Line0" CheckboxSize="32, 32"  Margin="0, 1" VerticalAlignment="Center"/>
+        </StackPanelWidget>
+	   
+	<CanvasWidget Size="0, 8" />
+	
+      <StackPanelWidget Direction="Horizontal" HorizontalAlignment="Center">
+        <BevelledButtonWidget Name="Img_Dialog.OK" Style="{Styles/ButtonStyle_160x60}" Text="Build" Margin="20, 0" />
+        <BevelledButtonWidget Name="Img_Dialog.Cancel" Style="{Styles/ButtonStyle_160x60}" Margin="20, 0" Text="Cancel"/>
+      </StackPanelWidget>
+    </StackPanelWidget>
+  </CanvasWidget>
+
+</CanvasWidget>

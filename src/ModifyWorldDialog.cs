@@ -1,0 +1,130 @@
+using System.Collections.Generic;
+using System.Xml.Linq;
+using TemplatesDatabase;
+
+namespace Game
+{
+	public class ModifyWorldDialog : Dialog
+	{
+		public TextBoxWidget m_nameTextBox;
+
+		public TextBoxWidget m_seedTextBox;
+		
+		public ButtonWidget m_gameModeButton;
+
+		public ButtonWidget m_worldOptionsButton;
+
+		public LabelWidget m_descriptionLabel;
+
+		public ButtonWidget m_applyButton;
+
+		public ButtonWidget m_cancelButton;
+
+		public WorldSettings m_worldSettings;
+
+		public ValuesDictionary m_currentWorldSettingsData = new ValuesDictionary();
+
+		public ValuesDictionary m_originalWorldSettingsData = new ValuesDictionary();
+
+		public bool m_changingGameModeAllowed;
+
+		public ModifyWorldDialog(WorldSettings worldSettings)
+		{
+			XElement node = ContentManager.Get<XElement>("WE/DialogsWE/ModifyWorldDialog");
+			LoadContents(this, node);
+			m_nameTextBox = Children.Find<TextBoxWidget>("Name");
+			m_seedTextBox = Children.Find<TextBoxWidget>("Seed");
+			m_gameModeButton = Children.Find<ButtonWidget>("GameMode");
+			m_worldOptionsButton = Children.Find<ButtonWidget>("WorldOptions");
+			m_descriptionLabel = Children.Find<LabelWidget>("Description");
+			m_applyButton = Children.Find<ButtonWidget>("Dialog.OK");
+			m_cancelButton = Children.Find<ButtonWidget>("Dialog.Cancel");
+			m_nameTextBox.TextChanged += delegate
+			{
+				m_worldSettings.Name = m_nameTextBox.Text;
+			};
+			m_seedTextBox.TextChanged += delegate
+			{
+				m_worldSettings.Seed = m_seedTextBox.Text;
+			};
+			// Soft copy, some things may still be shared though...
+			// E.g vectors
+			worldSettings.Save(m_originalWorldSettingsData, false);
+			m_worldSettings = new WorldSettings();
+			m_worldSettings.Load(m_originalWorldSettingsData);
+		}
+		
+		public GameMode? lastGameMode;
+
+		public override void Update()
+		{
+		    if (lastGameMode.HasValue)
+		    {
+		        m_worldSettings.GameMode = lastGameMode.Value;
+		        lastGameMode = null;
+		    }
+			if (m_gameModeButton.IsClicked)
+			{
+				DialogsManager.ShowDialog(null, new SelectGameModeDialog(string.Empty, allowAdventure: true, delegate(GameMode gameMode)
+				{
+					m_worldSettings.GameMode = gameMode;
+				}));
+			}
+			m_currentWorldSettingsData.Clear();
+			m_worldSettings.Save(m_currentWorldSettingsData, liveModifiableParametersOnly: false);
+			bool flag = !CompareValueDictionaries(m_originalWorldSettingsData, m_currentWorldSettingsData);
+			m_nameTextBox.Text = m_worldSettings.Name;
+			m_seedTextBox.Text = m_worldSettings.Seed;
+			m_gameModeButton.Text = LanguageControl.Get("GameMode", m_worldSettings.GameMode.ToString());
+			m_descriptionLabel.IsVisible = true;
+			m_applyButton.IsEnabled = true;
+			m_descriptionLabel.Text = StringsManager.GetString("GameMode." + m_worldSettings.GameMode.ToString() + ".Description");
+			if (m_worldOptionsButton.IsClicked)
+			{
+			    lastGameMode = m_worldSettings.GameMode;
+			    m_worldSettings.GameMode = GameMode.Creative;
+				ScreensManager.SwitchScreen("WorldOptions", m_worldSettings, false);
+			}
+			if (m_applyButton.IsClicked && flag)
+			{
+			    var componentGameInfo = GameManager.Project.FindSubsystem<SubsystemGameInfo>();
+			    DialogsManager.HideDialog(this);
+			    componentGameInfo.WorldSettings = m_worldSettings;
+			    GameManager.SaveProject(true, true);
+			    GameManager.DisposeProject();
+			    WorldInfo worldInfo = WorldsManager.GetWorldInfo(componentGameInfo.DirectoryName);
+		        ScreensManager.SwitchScreen("GameLoading", worldInfo, null);
+		        
+			}
+			if (base.Input.Back || base.Input.Cancel || m_cancelButton.IsClicked)
+			{
+				DialogsManager.HideDialog(this);
+			}
+			
+		}
+
+		public static bool CompareValueDictionaries(ValuesDictionary d1, ValuesDictionary d2)
+		{
+			if (d1.Count != d2.Count)
+			{
+				return false;
+			}
+			foreach (KeyValuePair<string, object> item in d1)
+			{
+				object value = d2.GetValue<object>(item.Key, null);
+				if (value is ValuesDictionary d3)
+				{
+					if (!(item.Value is ValuesDictionary d4) || !CompareValueDictionaries(d3, d4))
+					{
+						return false;
+					}
+				}
+				else if (!object.Equals(value, item.Value))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+}

@@ -1,0 +1,51 @@
+<CanvasWidget xmlns="runtime-namespace:Game">
+
+  <CanvasWidget Size="700, 280" ClampToBounds="true" HorizontalAlignment="Center" VerticalAlignment="Center">
+    <RectangleWidget FillColor="0, 0, 0, 255" OutlineColor="128, 128, 128, 128" OutlineThickness="2" />
+    <StackPanelWidget Direction="Vertical" HorizontalAlignment="Center" VerticalAlignment="Near" Margin="15, 15">
+      
+      <LabelWidget Name="Dialog.Title" Text="Teleport" HorizontalAlignment="Center"/>
+
+      <CanvasWidget Size="0, Infinity" />
+      
+	  <StackPanelWidget Direction="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <CanvasWidget Size="180, -1" VerticalAlignment="Center">
+            <LabelWidget Name="Dialog.XLabel" Text="X:" HorizontalAlignment="Center"/>
+          </CanvasWidget>
+          <CanvasWidget>
+            <RectangleWidget Size="Infinity, 40" FillColor="0, 0, 0, 0" OutlineColor="64, 64, 64, 64"/>
+            <TextBoxWidget Name="Dialog.X"  Color="255, 255, 255" Margin="4, 0" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+          </CanvasWidget>
+      </StackPanelWidget>
+      
+      <StackPanelWidget Direction="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <CanvasWidget Size="180, -1" VerticalAlignment="Center">
+            <LabelWidget Name="Dialog.YLabel" Text="Y:" HorizontalAlignment="Center"/>
+          </CanvasWidget>
+          <CanvasWidget>
+            <RectangleWidget Size="Infinity, 40" FillColor="0, 0, 0, 0" OutlineColor="64, 64, 64, 64"/>
+            <TextBoxWidget Name="Dialog.Y"  Color="255, 255, 255" Margin="4, 0" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+          </CanvasWidget>
+      </StackPanelWidget>
+      
+      <StackPanelWidget Direction="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <CanvasWidget Size="180, -1" VerticalAlignment="Center">
+            <LabelWidget Name="Dialog.ZLabel" Text="Z:" HorizontalAlignment="Center"/>
+          </CanvasWidget>
+          <CanvasWidget>
+            <RectangleWidget Size="Infinity, 40" FillColor="0, 0, 0, 0" OutlineColor="64, 64, 64, 64"/>
+            <TextBoxWidget Name="Dialog.Z"  Color="255, 255, 255" Margin="4, 0" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+          </CanvasWidget>
+      </StackPanelWidget>
+      
+      <CanvasWidget Size="0, Infinity" />
+
+      <StackPanelWidget Direction="Horizontal" HorizontalAlignment="Center">
+        <BevelledButtonWidget Name="Dialog.OK" Style="{Styles/ButtonStyle_160x60}" Text="OK" Margin="20, 0" />
+        <BevelledButtonWidget Name="Dialog.Cancel" Style="{Styles/ButtonStyle_160x60}" Margin="20, 0" Text="Cancel"/>
+      </StackPanelWidget>
+
+    </StackPanelWidget>
+  </CanvasWidget>
+
+</CanvasWidget>

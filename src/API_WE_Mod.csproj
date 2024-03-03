@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -38,32 +38,56 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
-  
   <ItemGroup>
-    <Reference Include="Survivalcraft">
-    <HintPath>../../zReference/1.42/Survivalcraft.dll</HintPath>
-    </Reference>
     <Reference Include="Engine">
-    <HintPath>../../zReference/1.42/Engine.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Documentos\SCApi\1.44\Engine.dll</HintPath>
     </Reference>
     <Reference Include="EntitySystem">
-    <HintPath>../../zReference/1.42/EntitySystem.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Documentos\SCApi\1.44\EntitySystem.dll</HintPath>
+    </Reference>
+    <Reference Include="Survivalcraft">
+      <HintPath>..\..\..\..\OneDrive\Documentos\SCApi\1.44\Survivalcraft.exe</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Drawing.Common" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-  
   <ItemGroup>
-    <Compile Include="*.cs" />
+    <Compile Include="API_WE.cs" />
+    <Compile Include="BlockGrid.cs" />
+    <Compile Include="BlockMem.cs" />
+    <Compile Include="Category.cs" />
+    <Compile Include="ComponentWE5.cs" />
+    <Compile Include="DebugCamera.cs" />
+    <Compile Include="ExtrasOperator.cs" />
+    <Compile Include="FastRun.cs" />
+    <Compile Include="IBuildFormat.cs" />
+    <Compile Include="ImageDialog.cs" />
+    <Compile Include="Img.cs" />
+    <Compile Include="Maze.cs" />
+    <Compile Include="ModifyWorldDialog.cs" />
+    <Compile Include="Mountain.cs" />
+    <Compile Include="OneKeyFormat.cs" />
+    <Compile Include="Position.cs" />
+    <Compile Include="Prism.cs" />
+    <Compile Include="Rectangle.cs" />
+    <Compile Include="Round.cs" />
+    <Compile Include="Sphere.cs" />
+    <Compile Include="Square.cs" />
+    <Compile Include="StepDebugger.cs" />
+    <Compile Include="ActionBindingsDialog.cs" />
+    <Compile Include="TeleportDialog.cs" />
+    <Compile Include="WEAction.cs" />
+    <Compile Include="WEOperationManager.cs" />
+    <Compile Include="WEUserManager.cs" />
+    <Compile Include="WorldEditFormat.cs" />
+    <Compile Include="ZoneDialog.cs" />
     <Compile Include="FindDominantColour/KCluster.cs" />
     <Compile Include="FindDominantColour/KMeansClusteringCalculator.cs" />
   </ItemGroup>
-  
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

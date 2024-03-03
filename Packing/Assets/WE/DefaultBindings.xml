@@ -1,0 +1,13 @@
+<Bindings>
+	<ActionBinding Action="Set point 1" Key="F1" WidgetSlot="F1" />
+	<ActionBinding Action="Set point 2" Key="F2" WidgetSlot="F2" />
+	<ActionBinding Action="Set point 3" Key="F3" WidgetSlot="F3" />
+	<ActionBinding Action="Fast Run" Key="F5" WidgetSlot="F5" />
+	<ActionBinding Action="Simple Fill" Key="F6" WidgetSlot="F6" />
+	<ActionBinding Action="Simple Replace" Key="F7" WidgetSlot="F7" />
+	<ActionBinding Action="Clear" Key="F8" WidgetSlot="F8" />
+	<ActionBinding Action="Copy to memory" Key="F9" WidgetSlot="F9" />
+	<ActionBinding Action="Paste from memory" Key="F10" WidgetSlot="F10" />
+	<ActionBinding Action="Geometric Shapes" Key="F11" WidgetSlot="F11" />
+	<ActionBinding Action="Extra functions" Key="F12" WidgetSlot="F12" />
+</Bindings>

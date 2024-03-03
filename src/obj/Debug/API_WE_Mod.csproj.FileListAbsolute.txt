@@ -1,0 +1,17 @@
+C:\Users\dayan\source\repos\SCWorldEdit\src\bin\Debug\API_WE_Mod.dll
+C:\Users\dayan\source\repos\SCWorldEdit\src\bin\Debug\API_WE_Mod.pdb
+C:\Users\dayan\source\repos\SCWorldEdit\src\bin\Debug\Engine.dll
+C:\Users\dayan\source\repos\SCWorldEdit\src\bin\Debug\EntitySystem.dll
+C:\Users\dayan\source\repos\SCWorldEdit\src\bin\Debug\Survivalcraft.exe
+C:\Users\dayan\source\repos\SCWorldEdit\src\bin\Debug\SharpDX.dll
+C:\Users\dayan\source\repos\SCWorldEdit\src\bin\Debug\SharpDX.XInput.dll
+C:\Users\dayan\source\repos\SCWorldEdit\src\bin\Debug\SharpDX.RawInput.dll
+C:\Users\dayan\source\repos\SCWorldEdit\src\bin\Debug\SharpDX.Direct3D11.dll
+C:\Users\dayan\source\repos\SCWorldEdit\src\bin\Debug\SharpDX.DXGI.dll
+C:\Users\dayan\source\repos\SCWorldEdit\src\bin\Debug\SharpDX.D3DCompiler.dll
+C:\Users\dayan\source\repos\SCWorldEdit\src\bin\Debug\SharpDX.XAudio2.dll
+C:\Users\dayan\source\repos\SCWorldEdit\src\obj\Debug\API_WE_Mod.csproj.AssemblyReference.cache
+C:\Users\dayan\source\repos\SCWorldEdit\src\obj\Debug\API_WE_Mod.csproj.CoreCompileInputs.cache
+C:\Users\dayan\source\repos\SCWorldEdit\src\obj\Debug\API_WE_Mod.csproj.CopyComplete
+C:\Users\dayan\source\repos\SCWorldEdit\src\obj\Debug\API_WE_Mod.dll
+C:\Users\dayan\source\repos\SCWorldEdit\src\obj\Debug\API_WE_Mod.pdb

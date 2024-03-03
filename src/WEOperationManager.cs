@@ -262,6 +262,7 @@ public static class WEOperationManager
                 }
             }
         }
+        user.ShowMessage($"Filled {endX - startX + 1}x{endY - startY + 1}x{endZ - startZ + 1} area\nwith {API_WE.GetDisplayName(user.SelectedBlock)} (from set point 1)");
     }
     
     public static void Replace(TerrainRaycastResult point1, TerrainRaycastResult point2, WEUser user)
@@ -288,9 +289,10 @@ public static class WEOperationManager
                 }
             }
         }
+        user.ShowMessage($"Replaced all {API_WE.GetDisplayName(user.ReplaceableBlock).ToLower()} (from set point 2) with {API_WE.GetDisplayName(user.SelectedBlock).ToLower()} (from set point 1)\nIn a {endX - startX + 1}x{endY - startY + 1}x{endZ - startZ + 1} area");
     }
     
-    public static void Clear(TerrainRaycastResult point1, TerrainRaycastResult point2)
+    public static void Clear(TerrainRaycastResult point1, TerrainRaycastResult point2, WEUser user)
     {
         int startX = MathUtils.Min(point1.CellFace.X, point2.CellFace.X);
         int endX = MathUtils.Max(point1.CellFace.X, point2.CellFace.X);
@@ -309,6 +311,8 @@ public static class WEOperationManager
                 }
             }
         }
+
+        user.ShowMessage($"Cleared {endX - startX + 1}x{endY - startY + 1}x{endZ - startZ+1} area");
     }
     
     public static void FillMemoryBankData(TerrainRaycastResult point1, TerrainRaycastResult point2, WEUser user)

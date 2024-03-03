@@ -766,6 +766,17 @@ namespace API_WE_Mod
 				this.id1 = (int)index;
 			}));*/
 		}
+
+		public static string GetDisplayName(int value)
+		{
+			int contents = Terrain.ExtractContents(value);
+			if (contents < 0 || contents > BlocksManager.Blocks.Length)
+				return "Invalid block.";
+			Block block = BlocksManager.Blocks[contents];
+			if (GameManager.Project != null)
+				return block.GetDisplayName(GameManager.Project.FindSubsystem<SubsystemTerrain>(), value);
+			return block.DefaultDisplayName;
+		}
 		
 		public static T Clone<T>(T obj) where T : new()
         {

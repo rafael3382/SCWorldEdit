@@ -9,6 +9,7 @@ using Engine.Input;
 using Game;
 using GameEntitySystem;
 using TemplatesDatabase;
+using XmlUtilities;
 
 namespace API_WE_Mod
 {
@@ -80,6 +81,7 @@ namespace API_WE_Mod
         public List<string> names = new List<string>();
         public List<string> extras = new List<string>();
 
+        public List<WEAction> actions = new List<WEAction>();
         public List<Category> m_categories = new List<Category>();
         
         public BitmapButtonWidget F1;
@@ -277,6 +279,8 @@ namespace API_WE_Mod
             names.Add("Mountain");
             names.Add("Line");
             //names.Add("Copy/Paste zone in file");
+
+            
             
             
             
@@ -287,15 +291,322 @@ namespace API_WE_Mod
                     Name = name
                 });
             }
-            LoadBTN();
-            extrasOperator = new ExtrasOperator(this);
+            try
+            {
+                InitializeActions();
+                LoadBTN();
+                LoadBindings();
+                extrasOperator = new ExtrasOperator(this);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+            }
         }
-        
-        
-        
-        public void UpdateExtras()
+
+        public void InitializeActions()
         {
-            extras.Clear();
+            LightingManager.CalculateLightingTables();
+            actions.Add(new WEAction("Set point 1", "1", WEAction.ActionType.Functionality, delegate
+            {
+                Ray3 ray1 = new Ray3(cam.ViewPosition, cam.ViewDirection);
+                object result = m_componentPlayer.ComponentMiner.Raycast(ray1, RaycastMode.Digging, true, false, false);
+                if (result is TerrainRaycastResult)
+                {
+                    Point1 = (TerrainRaycastResult)result;
+                    SelectedBlock = m_subsystemTerrain.Terrain.GetCellValue(Point1.CellFace.X, Point1.CellFace.Y, Point1.CellFace.Z);
+                    SelectedSpecialData = SpecialData.FromPosition(Point1.CellFace.Point);
+                    ShowMessage($"Set position 1 on: {Point1.CellFace.X}, {Point1.CellFace.Y}, {Point1.CellFace.Z}, Block ID {SelectedBlock}");
+                }
+                else
+                {
+                    Point1 = default;
+                    Point1.CellFace.Point = new Point3(cam.ViewPosition);
+                    Point1.CellFace.Face = 5;
+                    SelectedBlock = m_subsystemTerrain.Terrain.GetCellValue(Point1.CellFace.X, Point1.CellFace.Y, Point1.CellFace.Z);
+                    SelectedSpecialData = SpecialData.FromPosition(Point1.CellFace.Point);
+                    ShowMessage($"Set position 1 on: {Point1.CellFace.X}, {Point1.CellFace.Y}, {Point1.CellFace.Z}, Block ID {SelectedBlock}");
+                }
+            }));
+            actions.Add(new WEAction("Set point 2", "2", WEAction.ActionType.Functionality, delegate
+            {
+                Ray3 ray1 = new Ray3(cam.ViewPosition, cam.ViewDirection);
+                object result = m_componentPlayer.ComponentMiner.Raycast(ray1, RaycastMode.Digging, true, false, false);
+                if (result is TerrainRaycastResult)
+                {
+                    Point2 = (TerrainRaycastResult)result;
+                    ReplaceableBlock = m_subsystemTerrain.Terrain.GetCellValue(Point2.CellFace.X, Point2.CellFace.Y, Point2.CellFace.Z);
+                    ShowMessage($"Set position 2 on: {Point2.CellFace.X}, {Point2.CellFace.Y}, {Point2.CellFace.Z}, Block ID {ReplaceableBlock}");
+                }
+                else
+                {
+                    Point2 = default;
+                    Point2.CellFace.Point = new Point3(cam.ViewPosition);
+                    Point2.CellFace.Face = 5;
+                    ReplaceableBlock = m_subsystemTerrain.Terrain.GetCellValue(Point2.CellFace.X, Point2.CellFace.Y, Point2.CellFace.Z);
+                    ShowMessage($"Set position 2 on: {Point2.CellFace.X}, {Point2.CellFace.Y}, {Point2.CellFace.Z}, Block ID {ReplaceableBlock}");
+                }
+            }));
+            actions.Add(new WEAction("Set point 3", "3", WEAction.ActionType.Functionality, delegate
+            {
+                Ray3 ray1 = new Ray3(cam.ViewPosition, cam.ViewDirection);
+                object result = m_componentPlayer.ComponentMiner.Raycast(ray1, RaycastMode.Digging, true, false, false);
+                if (result is TerrainRaycastResult)
+                {
+                    Point3 = (TerrainRaycastResult)result;
+                    ShowMessage($"Set position 3 on: {Point3.CellFace.X}, {Point3.CellFace.Y}, {Point3.CellFace.Z}, Block ID {ReplaceableBlock}");
+                    return;
+                }
+            }));
+            actions.Add(new WEAction("Fast Run", ContentManager.Get<Texture2D>("WE/FastRun"), WEAction.ActionType.Functionality, delegate
+            {
+                if (m_componentPlayer.ComponentLocomotion.WalkSpeed != speed)
+                {
+                    m_componentPlayer.ComponentLocomotion.WalkSpeed = speed;
+                    m_componentPlayer.ComponentLocomotion.CreativeFlySpeed = speed;
+                }
+            },
+            delegate
+            {
+                m_componentPlayer.ComponentLocomotion.WalkSpeed = m_componentPlayer.ComponentLocomotion.ValuesDictionary.GetValue<float>("WalkSpeed");
+                m_componentPlayer.ComponentLocomotion.CreativeFlySpeed = m_componentPlayer.ComponentLocomotion.ValuesDictionary.GetValue<float>("CreativeFlySpeed");
+            }
+            ));
+            actions.Add(new WEAction("Simple Fill", "Fill", WEAction.ActionType.Operation, delegate
+            {
+                WEOperationManager.StartOperation("Fill", this);
+            }));
+            actions.Add(new WEAction("Simple Replace", "RE" + (char)173 + "­­­­­­­\nPLACE", WEAction.ActionType.Operation, delegate
+            {
+                WEOperationManager.StartOperation("Replace", this);
+            }));
+            actions.Add(new WEAction("Clear", "Clear", WEAction.ActionType.Operation, delegate
+            {
+                WEOperationManager.StartOperation("Clear", this);
+            }));
+            actions.Add(new WEAction("Copy to memory", "Mem\nCopy", WEAction.ActionType.Operation, delegate
+            {
+                WEOperationManager.StartOperation("MemCopy", this);
+            }));
+            actions.Add(new WEAction("Paste from memory", "Mem\nPaste", WEAction.ActionType.Operation, delegate
+            {
+                WEOperationManager.StartOperation("MemPaste", this);
+            }));
+            actions.Add(new WEAction("Geometric Shapes", ContentManager.Get<Texture2D>("WE/Shapes"), WEAction.ActionType.Functionality, delegate
+            {
+                Select_mode(m_categories, names);
+            }));
+            actions.Add(new WEAction("Extra functions", ContentManager.Get<Texture2D>("WE/Extra"), WEAction.ActionType.Functionality, delegate
+            {
+                ShowExtras();
+            }));
+            actions.Add(new WEAction("Transfer",
+                "Transfer",
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    WEOperationManager.StartOperation("Transfer", this);
+                },
+                problem: () => (Point1Set && Point2Set && Point3Set ? "" : "Need points 1,2,3"))
+            );
+            actions.Add(new WEAction("Rotate",
+                "Rotate",
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    
+                },
+                problem: () => ((Point1Set && Point2Set) || BlockMemory != null ? "" : "Need points 1,2 or memory"))
+            );
+            actions.Add(new WEAction("Fill specific block",
+                "Fill+",
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    
+                },
+                problem: () => (Point1Set && Point2Set ? "" : "Need points 1,2"))
+            );
+            actions.Add(new WEAction("Replace specific block",
+                "Replace+",
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    
+                },
+                problem: () => (Point1Set && Point2Set ? "" : "Need points 1,2"))
+            );
+            actions.Add(new WEAction("Get specific block",
+                "Obtain\nBlock",
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    
+                },
+                problem: () => Terrain.ExtractContents(m_componentPlayer.ComponentMiner.ActiveBlockValue) != 0 ? "Need empty selected slot" : ""
+            ));
+            actions.Add(new WEAction("Fill Memory Banks Data",
+                "Fill\nBanks",
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    WEOperationManager.StartOperation("FillMemoryBankData", this);
+                },
+                problem: () => Point1Set && Point2Set ? "" : "Need points 1,2"
+            ));
+            actions.Add(new WEAction("Copy/Paste zone in file",
+                ContentManager.Get<Texture2D>("WE/save"),
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    DialogsManager.ShowDialog(m_componentPlayer.GameWidget, new ZoneDialog(m_componentPlayer, Point1, Point2, Point3, m_subsystemTerrain));
+                },
+                problem: () => (Point1Set && Point2Set) || Point3Set ? "" : "Need points 1,2 or 3"
+            ));
+            actions.Add(new WEAction("Block Behaviors",
+                ContentManager.Get<Texture2D>("WE/block_behavior"),
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    extrasOperator.BlockBehaviorEnabled = !extrasOperator.BlockBehaviorEnabled;
+                    extrasOperator.UpdateBlockBehaviorEnabled();
+                },
+                checkable: true,
+                defaultCheck: true,
+                activateWhenUnchecked: true
+            ));
+            actions.Add(new WEAction("Draw Chunk Boundaries",
+                "Chunk\nBounds",
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    extrasOperator.DrawChunkBorders = !extrasOperator.DrawChunkBorders;
+                },
+                checkable: true,
+                activateWhenUnchecked: true
+            ));
+            actions.Add(new WEAction("Restore Terrain",
+                ContentManager.Get<Texture2D>("WE/restore_terrain"),
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    WEOperationManager.StartOperation("RestoreTerrain", this);
+                },
+                problem: () => Point1Set && Point2Set ? "" : "Need points 1,2"
+            ));
+            actions.Add(new WEAction("Circuit Step Debugger",
+               ContentManager.Get<Texture2D>("WE/circuit_debugger"),
+               WEAction.ActionType.Extra,
+               delegate
+               {
+                   extrasOperator.ToggleCircuitStepDebugger();
+               },
+               checkable: true,
+               activateWhenUnchecked: true
+            ));
+            actions.Add(new WEAction("Block Lighting",
+                ContentManager.Get<Texture2D>("WE/lighting"),
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    extrasOperator.BlockLightingEnabled = !extrasOperator.BlockLightingEnabled;
+                    extrasOperator.UpdateBlockLighting();
+                },
+                checkable: true,
+                activateWhenUnchecked: true
+            ));
+
+            actions.Add(new WEAction("Action Bindings",
+                "Act\nBinds",
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    DialogsManager.ShowDialog(m_gameWidget, new ActionBindingsDialog(this));
+                }
+            ));
+            actions.Add(new WEAction("Edit World Settings",
+                "World\nSettings",
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    DialogsManager.ShowDialog(m_componentPlayer.GameWidget, new ModifyWorldDialog(m_subsystemTerrain.Project.FindSubsystem<SubsystemGameInfo>().WorldSettings));
+                }
+            ));
+            actions.Add(new WEAction("Save World Map",
+                "Save\nMap",
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    
+                }
+            ));
+            actions.Add(new WEAction("Time Control",
+                ContentManager.Get<Texture2D>("WE/stop_time"),
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    extrasOperator.TimeStopped = !extrasOperator.TimeStopped;
+                    extrasOperator.UpdateTimeStop();
+                },
+                checkable: true,
+                activateWhenUnchecked: true
+            ));
+            actions.Add(new WEAction("Player Collision",
+                ContentManager.Get<Texture2D>("WE/player_collision"),
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    extrasOperator.PlayerCollisionEnabled = !extrasOperator.PlayerCollisionEnabled;
+                    extrasOperator.UpdatePlayerCollision();
+                },
+                checkable: true,
+                activateWhenUnchecked: true,
+                defaultCheck: true
+            ));
+            actions.Add(new WEAction("Teleport",
+                ContentManager.Get<Texture2D>("WE/teleport"),
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    DialogsManager.ShowDialog(m_componentPlayer.GameWidget, new TeleportDialog(m_componentPlayer));
+                }
+            ));
+            actions.Add(new WEAction("Clear Animals",
+                "Clear\nAnimals",
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    extrasOperator.ClearAnimals();
+                }
+            ));
+            actions.Add(new WEAction("Clear Drops",
+                "Clear\nDrops",
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    extrasOperator.ClearDrops();
+                }
+            ));
+            actions.Add(new WEAction("Unselect points",
+                "Unselect",
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    Point1 = default;
+                    Point2 = default;
+                    Point3 = default;
+                },
+                problem: () => Point1Set || Point2Set || Point3Set ? "" : "no points selected"
+            ));
+            actions.Add(new WEAction("Fast Run Settings",
+                "Run\nSetts",
+                WEAction.ActionType.Extra,
+                delegate
+                {
+                    extrasOperator.ClearDrops();
+                }
+            ));
+            /*
             extras.Add("Transfer" + (Point1Set && Point2Set && Point3Set ? "" : " (need points 1,2,3)"));
             extras.Add("Rotate" + (Point1Set && Point2Set || Point3Set ? "" : " (need points 1,2 or 3)"));
             extras.Add("Fill specific block" + (Point1Set && Point2Set ? "" : " (need points 1,2)"));
@@ -307,7 +618,6 @@ namespace API_WE_Mod
             extras.Add("Draw Chunk Boundaries");
             extras.Add("Restore Terrain" + (Point1Set && Point2Set ? "" : " (need points 1,2)"));
             extras.Add(extrasOperator.SlowCircuitStepMode ? "Normal Circuit Step Mode" : "Slow Circuit Step Mode");
-            extras.Add("Technical Information");
             extras.Add(extrasOperator.BlockLightingEnabled ? "Disable Block Lighting" : "Enable Block Lighting");
             extras.Add("Edit World Settings");
             extras.Add("Save World Map");
@@ -319,16 +629,24 @@ namespace API_WE_Mod
             if (Point1Set || Point2Set || Point3Set)
                 extras.Add("Unselect Points");
             extras.Add("Fast Run Settings");
+            */
+
+        }
+
+        public void UpdateExtras()
+        {
         }
         
         public void ShowExtras()
         {
-            UpdateExtras();
+            IEnumerable<WEAction> extras = actions.Where((act) => act.Type == WEAction.ActionType.Extra);
             DialogsManager.ShowDialog(m_componentPlayer.GameWidget, new ListSelectionDialog(string.Empty, extras, 56f, delegate(object c)
             {
+                WEAction extraAction = (WEAction)c;
+                string problem = extraAction.Problem?.Invoke();
                 LabelWidget labelWidget = new LabelWidget();
-                labelWidget.Text = c.ToString();
-                labelWidget.Color = c.ToString().Contains("(") ? Color.Gray*0.9f : Color.White;
+                labelWidget.Text = (extraAction.Checkable ? (extraAction.Checked ? LanguageControl.Disable : LanguageControl.Enable) + " " : "") + extraAction.Name + (string.IsNullOrEmpty(problem) ? "" : $" ({problem})");
+                labelWidget.Color = string.IsNullOrEmpty(problem) ? Color.White : Color.Gray*0.9f;
                 int horizontalAlignment = 1;
                 labelWidget.HorizontalAlignment = (WidgetAlignment) horizontalAlignment;
                 int verticalAlignment = 1;
@@ -340,9 +658,15 @@ namespace API_WE_Mod
                 {
                     return;
                 }
-                string extraName = c.ToString();
-                if (extraName.Contains("("))
-                    return;
+                WEAction extraAction = (WEAction)c;
+                string problem = extraAction.Problem?.Invoke();
+                if (string.IsNullOrEmpty(problem))
+                    extraAction.Interact();
+                else
+                {
+                    ShowMessage(problem);
+                }
+                /*
                 switch (extraName)
                 {
                     case "Disable Block Lighting":
@@ -362,7 +686,7 @@ namespace API_WE_Mod
                         extrasOperator.UpdatePlayerCollision();
                         break;
                     case "Draw Chunk Boundaries":
-                        extrasOperator.DrawChunkBorders = !extrasOperator.DrawChunkBorders;
+                        
                         break;
                     case "Unselect Points":
                         Point1 = default;
@@ -394,7 +718,7 @@ namespace API_WE_Mod
                         extrasOperator.ToggleCircuitStepDebugger();
                         break;
                     case "Restore Terrain":
-                        WEOperationManager.StartOperation("RestoreTerrain", this);
+                        
                         break;
                     case "Stop Time":
                     case "Resume Time":
@@ -402,6 +726,7 @@ namespace API_WE_Mod
                         extrasOperator.UpdateTimeStop();
                         break;
                 }
+                */
             }));
         }
         
@@ -463,71 +788,9 @@ namespace API_WE_Mod
         {
             try
             {
-                if (Keyboard.IsKeyDownOnce(Key.F1) || F1.IsClicked)
+                if (Keyboard.IsKeyDownOnce(Key.Tab))
                 {
-                    
-                    Ray3 ray1 = new Ray3(cam.ViewPosition, cam.ViewDirection);
-                    object result = m_componentPlayer.ComponentMiner.Raycast(ray1, RaycastMode.Digging, true, false, false);
-                    if (result is TerrainRaycastResult)
-                    {
-                        Point1 = (TerrainRaycastResult) result;
-                        SelectedBlock = m_subsystemTerrain.Terrain.GetCellValue(Point1.CellFace.X, Point1.CellFace.Y, Point1.CellFace.Z);
-                        SelectedSpecialData = SpecialData.FromPosition(Point1.CellFace.Point);
-                        ShowMessage($"Set position 1 on: {Point1.CellFace.X}, {Point1.CellFace.Y}, {Point1.CellFace.Z}, Block ID {SelectedBlock}");
-                    }
-                    else
-                    {
-                        Point1 = default;
-                        Point1.CellFace.Point = new Point3(cam.ViewPosition);
-                        Point1.CellFace.Face = 5;
-                        SelectedBlock = m_subsystemTerrain.Terrain.GetCellValue(Point1.CellFace.X, Point1.CellFace.Y, Point1.CellFace.Z);
-                        SelectedSpecialData = SpecialData.FromPosition(Point1.CellFace.Point);
-                        ShowMessage($"Set position 1 on: {Point1.CellFace.X}, {Point1.CellFace.Y}, {Point1.CellFace.Z}, Block ID {SelectedBlock}");
-                    }
-                }
-                if (Keyboard.IsKeyDown(Key.F2) || F2.IsClicked)
-                {
-                    Ray3 ray1 = new Ray3(cam.ViewPosition, cam.ViewDirection);
-                    object result = m_componentPlayer.ComponentMiner.Raycast(ray1, RaycastMode.Digging, true, false, false);
-                    if (result is TerrainRaycastResult)
-                    {
-                        Point2 = (TerrainRaycastResult) result;
-                        ReplaceableBlock = m_subsystemTerrain.Terrain.GetCellValue(Point2.CellFace.X, Point2.CellFace.Y, Point2.CellFace.Z);
-                        ShowMessage($"Set position 2 on: {Point2.CellFace.X}, {Point2.CellFace.Y}, {Point2.CellFace.Z}, Block ID {ReplaceableBlock}");
-                    }
-                    else
-                    {
-                        Point2 = default;
-                        Point2.CellFace.Point = new Point3(cam.ViewPosition);
-                        Point2.CellFace.Face = 5;
-                        ReplaceableBlock = m_subsystemTerrain.Terrain.GetCellValue(Point2.CellFace.X, Point2.CellFace.Y, Point2.CellFace.Z);
-                        ShowMessage($"Set position 2 on: {Point2.CellFace.X}, {Point2.CellFace.Y}, {Point2.CellFace.Z}, Block ID {ReplaceableBlock}");
-                    }
-                }
-                if (Keyboard.IsKeyDown(Key.F3) || F3.IsClicked)
-                {
-                    Ray3 ray1 = new Ray3(cam.ViewPosition, cam.ViewDirection);
-                    object result = m_componentPlayer.ComponentMiner.Raycast(ray1, RaycastMode.Digging, true, false, false);
-                    if (result is TerrainRaycastResult)
-                    {
-                        Point3 = (TerrainRaycastResult) result;
-                        ShowMessage($"Set position 3 on: {Point3.CellFace.X}, {Point3.CellFace.Y}, {Point3.CellFace.Z}, Block ID {ReplaceableBlock}");
-                        return;
-                    }
-                }
-                
-                if (F5.IsChecked)
-                {
-                    if (m_componentPlayer.ComponentLocomotion.WalkSpeed != speed)
-                    {
-                        m_componentPlayer.ComponentLocomotion.WalkSpeed = speed;
-                        m_componentPlayer.ComponentLocomotion.CreativeFlySpeed = speed;
-                    }
-               }
-               else
-               {
-                      m_componentPlayer.ComponentLocomotion.WalkSpeed = m_componentPlayer.ComponentLocomotion.ValuesDictionary.GetValue<float>("WalkSpeed");
-                      m_componentPlayer.ComponentLocomotion.CreativeFlySpeed = m_componentPlayer.ComponentLocomotion.ValuesDictionary.GetValue<float>("CreativeFlySpeed");
+                    WorldEditMenu.IsChecked = !WorldEditMenu.IsChecked;
                 }
                 
                 WorldEditMenuContainerBottom.IsVisible = WorldEditMenu.IsChecked;
@@ -544,39 +807,18 @@ namespace API_WE_Mod
                         SettingsManager.LookControlMode = OldLookControlMode;
                     }
                 }
-                if (Keyboard.IsKeyDownOnce(Key.F12) || F12.IsClicked)
+                foreach (WEAction action in actions)
                 {
-                    ShowExtras();
-                }
-                else if (Keyboard.IsKeyDownOnce(Key.F6) || F6.IsClicked)
-                {
-                    WEOperationManager.StartOperation("Fill", this);
-                }
-                else if (Keyboard.IsKeyDownOnce(Key.F7) || F7.IsClicked)
-                {
-                    WEOperationManager.StartOperation("Replace", this);
-                }
-                else if (Keyboard.IsKeyDownOnce(Key.F8) || F8.IsClicked)
-                {
-                    WEOperationManager.StartOperation("Clear", this);
-                }
-                else if (Keyboard.IsKeyDownOnce(Key.F9) || F9.IsClicked)
-                {
-                    WEOperationManager.StartOperation("MemCopy", this);
-                }
-                else if (Keyboard.IsKeyDownOnce(Key.F10) || F10.IsClicked)
-                {
-                    WEOperationManager.StartOperation("MemPaste", this);
-                }
-                else if (F11.IsClicked || Keyboard.IsKeyDownOnce(Key.Enter))
-                {
-                    Select_mode(m_categories, names);
+                    if (action.Key > 0 && Keyboard.IsKeyDownOnce(action.Key))
+                        action.Interact();
+                    if (action.ButtonWidget != null && action.ButtonWidget.IsClicked)
+                        action.Interact();
                 }
                 extrasOperator.UpdateTimeStop();
             }
             catch (Exception e)
             {
-                Log.Error(e);
+                //Log.Error(e);
             }
         }
         
@@ -788,34 +1030,15 @@ namespace API_WE_Mod
             m_componentPlayer.ComponentGui.DisplaySmallMessage(string.Format("7896868", num), Color.White, true, true);
         }
 
+        public StackPanelWidget WEPlace;
+
         public void LoadBTN()
         {
             GameWidget gameWidget = m_componentPlayer.GameWidget;
             m_gameWidget = gameWidget;
-            StackPanelWidget WEPlace = gameWidget.Children.Find<StackPanelWidget>("RightControlsContainer");
+            WEPlace = gameWidget.Children.Find<StackPanelWidget>("RightControlsContainer");
             WEPlace.LoadChildren(WEPlace, ContentManager.Get<XElement>("WE/WEMenu"));
-            Subtexture f1_normal = new Subtexture(ContentManager.Get<Texture2D>("WE/Button1"), Vector2.Zero, Vector2.One);
-            Subtexture f2_normal = new Subtexture(ContentManager.Get<Texture2D>("WE/Button2"), Vector2.Zero, Vector2.One);
-            Subtexture f3_normal = new Subtexture(ContentManager.Get<Texture2D>("WE/Button3"), Vector2.Zero, Vector2.One);
-            Subtexture extra_normal = new Subtexture(ContentManager.Get<Texture2D>("WE/ButtonExtra"), Vector2.Zero, Vector2.One);
-            Subtexture fill_normal = new Subtexture(ContentManager.Get<Texture2D>("WE/ButtonFill"), Vector2.Zero, Vector2.One);
-            Subtexture normalSubtexture6 = new Subtexture(ContentManager.Get<Texture2D>("WE/ButtonReplace"), Vector2.Zero, Vector2.One);
-            Subtexture normalSubtexture7 = new Subtexture(ContentManager.Get<Texture2D>("WE/ButtonClear"), Vector2.Zero, Vector2.One);
-            Subtexture normalSubtexture8 = new Subtexture(ContentManager.Get<Texture2D>("WE/ButtonMemCopy"), Vector2.Zero, Vector2.One);
-            Subtexture normalSubtexture9 = new Subtexture(ContentManager.Get<Texture2D>("WE/ButtonMemPaste"), Vector2.Zero, Vector2.One);
-            Subtexture clickedSubtexture = new Subtexture(ContentManager.Get<Texture2D>("WE/Button1_pressed"), Vector2.Zero, Vector2.One);
-            Subtexture clickedSubtexture2 = new Subtexture(ContentManager.Get<Texture2D>("WE/Button2_pressed"), Vector2.Zero, Vector2.One);
-            Subtexture clickedSubtexture3 = new Subtexture(ContentManager.Get<Texture2D>("WE/Button3_pressed"), Vector2.Zero, Vector2.One);
-            Subtexture extra_clicked = new Subtexture(ContentManager.Get<Texture2D>("WE/ButtonExtra_pressed"), Vector2.Zero, Vector2.One);
-            Subtexture clickedSubtexture5 = new Subtexture(ContentManager.Get<Texture2D>("WE/ButtonFill_pressed"), Vector2.Zero, Vector2.One);
-            Subtexture clickedSubtexture6 = new Subtexture(ContentManager.Get<Texture2D>("WE/ButtonReplace_pressed"), Vector2.Zero, Vector2.One);
-            Subtexture clickedSubtexture7 = new Subtexture(ContentManager.Get<Texture2D>("WE/ButtonClear_pressed"), Vector2.Zero, Vector2.One);
-            Subtexture clickedSubtexture8 = new Subtexture(ContentManager.Get<Texture2D>("WE/ButtonMemCopy_pressed"), Vector2.Zero, Vector2.One);
-            Subtexture clickedSubtexture9 = new Subtexture(ContentManager.Get<Texture2D>("WE/ButtonMemPaste_pressed"), Vector2.Zero, Vector2.One);
-            Subtexture normalSubtexture10 = new Subtexture(ContentManager.Get<Texture2D>("WE/Button_geo"), Vector2.Zero, Vector2.One);
-            Subtexture clickedSubtexture10 = new Subtexture(ContentManager.Get<Texture2D>("WE/Button_geo_press"), Vector2.Zero, Vector2.One);
-            Subtexture normalSubtexture11 = new Subtexture(ContentManager.Get<Texture2D>("WE/Button_run"), Vector2.Zero, Vector2.One);
-            Subtexture clickedSubtexture11 = new Subtexture(ContentManager.Get<Texture2D>("WE/Button_run_press"), Vector2.Zero, Vector2.One);
+            
             Subtexture normalSubtexture12 = new Subtexture(ContentManager.Get<Texture2D>("WE/WEBTN"), Vector2.Zero, Vector2.One);
             Subtexture clickedSubtexture12 = new Subtexture(ContentManager.Get<Texture2D>("WE/WEBTNP"), Vector2.Zero, Vector2.One);
             F1 = WEPlace.Children.Find<BitmapButtonWidget>("F1", true);
@@ -829,38 +1052,29 @@ namespace API_WE_Mod
             F10 = WEPlace.Children.Find<BitmapButtonWidget>("F10", true);
             F11 = WEPlace.Children.Find<BitmapButtonWidget>("F11", true);
             F12 = WEPlace.Children.Find<BitmapButtonWidget>("F12", true);
-            WorldEditMenu = gameWidget.Children.Find<BitmapButtonWidget>("WorldEditMenu", true);
-            WorldEditMenuContainerBottom = gameWidget.Children.Find<StackPanelWidget>("WorldEditMenuContainerBottom", true);
-            WorldEditMenuContainerTop = gameWidget.Children.Find<StackPanelWidget>("WorldEditMenuContainerTop", true);
+            WorldEditMenu = WEPlace.Children.Find<BitmapButtonWidget>("WorldEditMenu", true);
             WorldEditMenu.NormalSubtexture = normalSubtexture12;
             WorldEditMenu.ClickedSubtexture = clickedSubtexture12;
-            F1.NormalSubtexture = f1_normal;
-            F2.NormalSubtexture = f2_normal;
-            F3.NormalSubtexture = f3_normal;
-            F5.NormalSubtexture = normalSubtexture11;
-            F6.NormalSubtexture = fill_normal;
-            F7.NormalSubtexture = normalSubtexture6;
-            F8.NormalSubtexture = normalSubtexture7;
-            F9.NormalSubtexture = normalSubtexture8;
-            F10.NormalSubtexture = normalSubtexture9;
-            F1.ClickedSubtexture = clickedSubtexture;
-            F2.ClickedSubtexture = clickedSubtexture2;
-            F3.ClickedSubtexture = clickedSubtexture3;
-            F5.ClickedSubtexture = clickedSubtexture11;
-            F6.ClickedSubtexture = clickedSubtexture5;
-            F7.ClickedSubtexture = clickedSubtexture6;
-            F8.ClickedSubtexture = clickedSubtexture7;
-            F9.ClickedSubtexture = clickedSubtexture8;
-            F10.ClickedSubtexture = clickedSubtexture9;
-            F11.NormalSubtexture = normalSubtexture10;
-            F11.ClickedSubtexture = clickedSubtexture10;
-            F12.NormalSubtexture = extra_normal;
-            F12.ClickedSubtexture = extra_clicked;
+            WorldEditMenuContainerTop = WEPlace.Children.Find<StackPanelWidget>("WorldEditMenuContainerTop", true);
+            WorldEditMenuContainerBottom = WEPlace.Children.Find<StackPanelWidget>("WorldEditMenuContainerBottom", true);
         }
-        
-        public void SetCell(int x, int y, int z, int id)
+
+        public void LoadBindings()
         {
-            m_subsystemTerrain.ChangeCell(x, y, z, id, true);
+            XElement bindingsFile = ContentManager.Get<XElement>("WE/DefaultBindings");
+            foreach (XElement element in bindingsFile.Elements())
+            {
+                if (element.Name == "ActionBinding")
+                {
+                    string actionName = XmlUtils.GetAttributeValue<string>(element, "Action");
+                    Key key = XmlUtils.GetAttributeValue<Key>(element, "Key", (Key)(-1));
+                    string widgetSlotName = XmlUtils.GetAttributeValue<string>(element, "WidgetSlot", "None");
+                    var widget = WEPlace.Children.Find<BitmapButtonWidget>(widgetSlotName);
+                    WEAction action = actions.FirstOrDefault((acti) => acti.Name == actionName);
+                    action.ButtonWidget = widget;
+                    action.Key = key;
+                }
+            }
         }
     }
 }

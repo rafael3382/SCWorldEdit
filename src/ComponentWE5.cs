@@ -513,7 +513,8 @@ namespace API_WE_Mod
                     extrasOperator.UpdateBlockLighting();
                 },
                 checkable: true,
-                activateWhenUnchecked: true
+                activateWhenUnchecked: true,
+                defaultCheck: true
             ));
 
             actions.Add(new WEAction("Action Bindings",
@@ -603,7 +604,7 @@ namespace API_WE_Mod
                 WEAction.ActionType.Extra,
                 delegate
                 {
-                    extrasOperator.ClearDrops();
+                    DialogsManager.ShowDialog(m_componentPlayer.GameWidget, new FastRun(m_componentPlayer));
                 }
             ));
             /*

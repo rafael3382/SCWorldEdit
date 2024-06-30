@@ -1,23 +1,25 @@
 <WELang>
-	<Translation Text="Fill" Translation="Preencher" />
-	<Translation Text="Mem0xAD\nCopy" Translation="Copiar0xADMem" />
-	<Translation Text="Fill" Translation="Preencher" />
+	<Translation Text="Advanced Fill" Translation="Preenchimento Avançado" />
+	<Translation Text="Fill" Translation="Pree\nncher" />
+	<Translation Text="Mem\nCopy" Translation="Copiar0xADMem" />
+	<Translation Text="Mem\nPaste" Translation="Colar0xADMem" />
 	<Translation Text="Clear" Translation="Limpar" />
-	<Translation Text="Fill" Translation="Preencher" />
+	<Translation Text="Animals" Translation="Animais" />
+	<Translation Text="Re\nplace" Translation="Subst\nituir" />
 	<Translation Text="Fill" Translation="Preencher" />
 	<Translation Text="Disable" Translation="Desativar" />
 	<Translation Text="Enable" Translation="Ativar" />
 	<Translation Text="Teleport" Translation="Teleportar" />
 	<Translation Text="Stop Time" Translation="Parar o tempo" />
 	<Translation Text="Block Collision" Translation="colisão com blocos" />
+	<Translation Text="Action Bindings" Translation="Atalhos de ação" />
+	<Translation Text="Block Lighting" Translation="Iluminação" />
+	<Translation Text="Rotate" Translation="Girar" />
 	<Translation Text="Fill" Translation="Preencher" />
 	<Translation Text="Fill" Translation="Preencher" />
 	<Translation Text="Fill" Translation="Preencher" />
-	<Translation Text="Fill" Translation="Preencher" />
-	<Translation Text="Fill" Translation="Preencher" />
-	<Translation Text="Fill" Translation="Preencher" />
-	<Translation Text="Fill" Translation="Preencher" />
-	<Translation Text="Fill" Translation="Preencher" />
+	<Translation Text="Memory Banks Data" Translation="Dados dos Bancos de Memória" />
+	<Translation Text="Restore Terrain" Translation="Restaurar Terreno" />
 	<Translation Text="Image" Translation="Imagem" />
 	<Translation Text="Sphere" Translation="Esfera" />
 	<Translation Text="Square" Translation="Quadrado" />

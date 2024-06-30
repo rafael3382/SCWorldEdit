@@ -30,150 +30,148 @@ namespace API_WE_Mod
 	    public static void draw_img(bool use_custom_palette, bool mirror, int ofset_paletr, int deep_color, bool on_furn, int size, int furn_resol, bool pos, bool rotate, string pa, Point3 start, SubsystemTerrain subsystemTerrain, ComponentPlayer p)
 		{
 		    pos = !pos;
-			Task.Run(delegate
+			try
 			{
+				Image image = null;
 				try
 				{
-					Image image = null;
-					try
+					image = Image.Load(pa);
+				}
+				catch (Exception)
+				{
+					p.ComponentGui.DisplaySmallMessage($"Error when reading image.", Engine.Color.White, blinking: true, playNotificationSound: true);
+					return;
+				}
+				if (!on_furn)
+				{
+					furn_resol = 1;
+				}
+				if (!mirror)
+				{
+				    Image mirrored = new Image(image.Width, image.Height);
+					for (int j = 0; j < image.Width; j++)
 					{
-						image = Image.Load(pa);
-					}
-					catch (Exception)
-					{
-						p.ComponentGui.DisplaySmallMessage($"Error when reading image.", Engine.Color.White, blinking: true, playNotificationSound: true);
-						return;
-					}
-					if (!on_furn)
-					{
-						furn_resol = 1;
-					}
-					if (!mirror)
-					{
-					    Image mirrored = new Image(image.Width, image.Height);
-						for (int j = 0; j < image.Width; j++)
+						for (int k = 0; k < image.Height; k++)
 						{
-							for (int k = 0; k < image.Height; k++)
-							{
-							    mirrored.SetPixel(image.Width-1-j, k, image.GetPixel(j, k));
-                            }
+						    mirrored.SetPixel(image.Width-1-j, k, image.GetPixel(j, k));
                         }
-                        image = mirrored;
-					}
-					if (pos)
+                    }
+                    image = mirrored;
+				}
+				if (pos)
+				{
+					Image rotated = new Image(image.Height, image.Width);
+					for (int j = 0; j < rotated.Width; j++)
 					{
-						Image rotated = new Image(image.Height, image.Width);
-						for (int j = 0; j < rotated.Width; j++)
+						for (int k = 0; k < rotated.Height; k++)
 						{
-							for (int k = 0; k < rotated.Height; k++)
-							{
-							    rotated.SetPixel(j, rotated.Height-1-k, image.GetPixel(k, j));
-                            }
+						    rotated.SetPixel(j, rotated.Height-1-k, image.GetPixel(k, j));
                         }
-                        image = rotated;
+                    }
+                    image = rotated;
+				}
+				
+				// Scale and invert Y
+				Image scaledimage = new Image(image.Width / size, image.Height / size);
+				for (int j = 0; j < scaledimage.Width; j++)
+				{
+					for (int k = 0; k < scaledimage.Height; k++)
+					{
+		                scaledimage.SetPixel(scaledimage.Width-1-j, k, image.GetPixel(j * size, k * size));
+		            }
+		        }
+		        image = scaledimage;
+		        
+				int num = 0;
+				int maxFurniture = subsystemTerrain.SubsystemFurnitureBlockBehavior.m_furnitureDesigns.Length;
+				for (int i = 0; i < maxFurniture; i++)
+				{
+					if (subsystemTerrain.SubsystemFurnitureBlockBehavior.GetDesign(i) != null)
+					{
+						num++;
 					}
-					
-					// Scale and invert Y
-					Image scaledimage = new Image(image.Width / size, image.Height / size);
-					for (int j = 0; j < scaledimage.Width; j++)
+				}
+				num = maxFurniture - num;
+				int num2 = (image.Width / furn_resol) * (image.Height / furn_resol);
+				if (on_furn && num2 > num)
+				{
+					p.ComponentGui.DisplaySmallMessage($"Too many furniture designs.\n{num2} designs needed.\n{num} available designs.", Color.Red, blinking: true, playNotificationSound: true);
+				}
+				else
+				{
+					if (use_custom_palette)
 					{
-						for (int k = 0; k < scaledimage.Height; k++)
-						{
-			                scaledimage.SetPixel(scaledimage.Width-1-j, k, image.GetPixel(j * size, k * size));
-			            }
-			        }
-			        image = scaledimage;
-			        
-					int num = 0;
-					for (int i = 0; i < 1024; i++)
-					{
-						if (subsystemTerrain.SubsystemFurnitureBlockBehavior.GetDesign(i) != null)
-						{
-							num++;
-						}
+						top_colors(ofset_paletr, deep_color, image, subsystemTerrain.SubsystemPalette);
 					}
-					num = 1024 - num;
-					int num2 = (image.Width / furn_resol) * (image.Height / furn_resol);
-					if (on_furn && num2 > num)
+					new List<int>();
+					for (int l = 0; l < image.Width / furn_resol; l++)
 					{
-						p.ComponentGui.DisplaySmallMessage(string.Format("Not enough furniture blocks (" + num + "/" + num2 + ")"), Color.White, blinking: true, playNotificationSound: true);
-					}
-					else
-					{
-						if (use_custom_palette)
+						for (int m = 0; m < image.Height / furn_resol; m++)
 						{
-							top_colors(ofset_paletr, deep_color, image, subsystemTerrain.SubsystemPalette);
-						}
-						new List<int>();
-						for (int l = 0; l < image.Width / furn_resol; l++)
-						{
-							for (int m = 0; m < image.Height / furn_resol; m++)
+							if (on_furn)
 							{
-								if (on_furn)
+								List<int> list = new List<int>();
+								bool flag = false;
+								for (int n = 0; n < furn_resol; n++)
 								{
-									List<int> list = new List<int>();
-									bool flag = false;
-									for (int n = 0; n < furn_resol; n++)
+									for (int num3 = 0; num3 < furn_resol; num3++)
 									{
-										for (int num3 = 0; num3 < furn_resol; num3++)
+										if (get_block_id(GetClosestColor(subsystemTerrain.SubsystemPalette.m_colors, image.GetPixel(l * furn_resol + n, m * furn_resol + num3)), subsystemTerrain.SubsystemPalette) != 0 && !flag)
 										{
-											if (get_block_id(GetClosestColor(subsystemTerrain.SubsystemPalette.m_colors, image.GetPixel(l * furn_resol + n, m * furn_resol + num3)), subsystemTerrain.SubsystemPalette) != 0 && !flag)
-											{
-												flag = true;
-											}
-											list.Add(get_block_id(GetClosestColor(subsystemTerrain.SubsystemPalette.m_colors, image.GetPixel(l * furn_resol + n, m * furn_resol + num3)), subsystemTerrain.SubsystemPalette));
+											flag = true;
 										}
-									}
-									if (flag)
-									{
-										int value = create_dsg(rotate, pos, furn_resol, list, subsystemTerrain, ("x " + l + "  y " + m).ToString());
-										if (pos)
-										{
-											if (rotate)
-											{
-												subsystemTerrain.ChangeCell(start.X, start.Y + l, start.Z + m, value);
-											}
-											else
-											{
-												subsystemTerrain.ChangeCell(start.X + m, start.Y + l, start.Z, value);
-											}
-										}
-										else
-										{
-											subsystemTerrain.ChangeCell(start.X + m, start.Y, start.Z + l, value);
-										}
+										list.Add(get_block_id(GetClosestColor(subsystemTerrain.SubsystemPalette.m_colors, image.GetPixel(l * furn_resol + n, m * furn_resol + num3)), subsystemTerrain.SubsystemPalette));
 									}
 								}
-								else
+								if (flag)
 								{
-									int value2 = get_block_id(GetClosestColor(subsystemTerrain.SubsystemPalette.m_colors, image.GetPixel(l, m)), subsystemTerrain.SubsystemPalette);
+									int value = create_dsg(rotate, pos, furn_resol, list, subsystemTerrain, ("x " + l + "  y " + m).ToString());
 									if (pos)
 									{
 										if (rotate)
 										{
-											subsystemTerrain.ChangeCell(start.X, start.Y + l, start.Z + m, value2);
+											subsystemTerrain.ChangeCell(start.X, start.Y + l, start.Z + m, value);
 										}
 										else
 										{
-											subsystemTerrain.ChangeCell(start.X + m, start.Y + l, start.Z, value2);
+											subsystemTerrain.ChangeCell(start.X + m, start.Y + l, start.Z, value);
 										}
 									}
 									else
 									{
-										subsystemTerrain.ChangeCell(start.X + m, start.Y, start.Z + l, value2);
+										subsystemTerrain.ChangeCell(start.X + m, start.Y, start.Z + l, value);
 									}
 								}
 							}
+							else
+							{
+								int value2 = get_block_id(GetClosestColor(subsystemTerrain.SubsystemPalette.m_colors, image.GetPixel(l, m)), subsystemTerrain.SubsystemPalette);
+								if (pos)
+								{
+									if (rotate)
+									{
+										subsystemTerrain.ChangeCell(start.X, start.Y + l, start.Z + m, value2);
+									}
+									else
+									{
+										subsystemTerrain.ChangeCell(start.X + m, start.Y + l, start.Z, value2);
+									}
+								}
+								else
+								{
+									subsystemTerrain.ChangeCell(start.X + m, start.Y, start.Z + l, value2);
+								}
+							}
 						}
-						p.ComponentGui.DisplaySmallMessage(string.Format("Success " + num2 + " blocks placed"), Color.White, blinking: true, playNotificationSound: true);
 					}
+					p.ComponentGui.DisplaySmallMessage(string.Format("Success " + num2 + " blocks placed"), Color.White, blinking: true, playNotificationSound: true);
 				}
-				catch (Exception ex2)
-				{
-					p.ComponentGui.DisplaySmallMessage(string.Format("Failed. reason: " + ex2.Message), Color.White, blinking: true, playNotificationSound: true);
-					Log.Error(ex2);
-				}
-			});
+			}
+			catch (Exception ex2)
+			{
+				p.ComponentGui.DisplaySmallMessage(string.Format("Failed. reason: " + ex2.Message), Color.White, blinking: true, playNotificationSound: true);
+				Log.Error(ex2);
+			}
 		}
 		
 		private static Engine.Color GetClosestColor(Engine.Color[] colorArray, Engine.Color baseColor)

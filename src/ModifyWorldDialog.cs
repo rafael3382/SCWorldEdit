@@ -8,7 +8,9 @@ namespace Game
 	{
 		public TextBoxWidget m_nameTextBox;
 
-		public TextBoxWidget m_seedTextBox;
+		public TextBoxWidget m_textSeedTextBox;
+		
+		public TextBoxWidget m_numSeedTextBox;
 		
 		public ButtonWidget m_gameModeButton;
 
@@ -27,13 +29,16 @@ namespace Game
 		public ValuesDictionary m_originalWorldSettingsData = new ValuesDictionary();
 
 		public bool m_changingGameModeAllowed;
+		
+		public int modifiedWorldSeed;
 
 		public ModifyWorldDialog(WorldSettings worldSettings)
 		{
 			XElement node = ContentManager.Get<XElement>("WE/DialogsWE/ModifyWorldDialog");
 			LoadContents(this, node);
 			m_nameTextBox = Children.Find<TextBoxWidget>("Name");
-			m_seedTextBox = Children.Find<TextBoxWidget>("Seed");
+			m_textSeedTextBox = Children.Find<TextBoxWidget>("TextSeed");
+			m_numSeedTextBox = Children.Find<TextBoxWidget>("NumSeed");
 			m_gameModeButton = Children.Find<ButtonWidget>("GameMode");
 			m_worldOptionsButton = Children.Find<ButtonWidget>("WorldOptions");
 			m_descriptionLabel = Children.Find<LabelWidget>("Description");
@@ -43,15 +48,23 @@ namespace Game
 			{
 				m_worldSettings.Name = m_nameTextBox.Text;
 			};
-			m_seedTextBox.TextChanged += delegate
+			m_textSeedTextBox.TextChanged += delegate
 			{
-				m_worldSettings.Seed = m_seedTextBox.Text;
+				m_worldSettings.Seed = m_textSeedTextBox.Text;
+			};
+			m_numSeedTextBox.TextChanged += delegate
+			{
+			    if (int.TryParse(m_numSeedTextBox.Text, out int seed))
+			    {
+				    modifiedWorldSeed = seed;
+				}
 			};
 			// Soft copy, some things may still be shared though...
-			// E.g vectors
 			worldSettings.Save(m_originalWorldSettingsData, false);
 			m_worldSettings = new WorldSettings();
 			m_worldSettings.Load(m_originalWorldSettingsData);
+			
+			modifiedWorldSeed = GameManager.Project.FindSubsystem<SubsystemGameInfo>().WorldSeed;
 		}
 		
 		public GameMode? lastGameMode;
@@ -74,7 +87,8 @@ namespace Game
 			m_worldSettings.Save(m_currentWorldSettingsData, liveModifiableParametersOnly: false);
 			bool flag = !CompareValueDictionaries(m_originalWorldSettingsData, m_currentWorldSettingsData);
 			m_nameTextBox.Text = m_worldSettings.Name;
-			m_seedTextBox.Text = m_worldSettings.Seed;
+			m_textSeedTextBox.Text = m_worldSettings.Seed;
+			m_numSeedTextBox.Text = modifiedWorldSeed.ToString();
 			m_gameModeButton.Text = LanguageControl.Get("GameMode", m_worldSettings.GameMode.ToString());
 			m_descriptionLabel.IsVisible = true;
 			m_applyButton.IsEnabled = true;
@@ -86,10 +100,11 @@ namespace Game
 				ScreensManager.SwitchScreen("WorldOptions", m_worldSettings, false);
 			}
 			if (m_applyButton.IsClicked && flag)
-			{
+            {
 			    var componentGameInfo = GameManager.Project.FindSubsystem<SubsystemGameInfo>();
 			    DialogsManager.HideDialog(this);
 			    componentGameInfo.WorldSettings = m_worldSettings;
+			    componentGameInfo.WorldSeed = modifiedWorldSeed;
 			    GameManager.SaveProject(true, true);
 			    GameManager.DisposeProject();
 			    WorldInfo worldInfo = WorldsManager.GetWorldInfo(componentGameInfo.DirectoryName);

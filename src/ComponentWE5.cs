@@ -360,17 +360,18 @@ namespace API_WE_Mod
             }));
             actions.Add(new WEAction("Fast Run", ContentManager.Get<Texture2D>("WE/FastRun"), WEAction.ActionType.Functionality, delegate
             {
+                m_componentPlayer.ComponentLocomotion.WalkSpeed = m_componentPlayer.ComponentLocomotion.ValuesDictionary.GetValue<float>("WalkSpeed");
+                m_componentPlayer.ComponentLocomotion.CreativeFlySpeed = m_componentPlayer.ComponentLocomotion.ValuesDictionary.GetValue<float>("CreativeFlySpeed");
+            },
+            delegate
+            {
                 if (m_componentPlayer.ComponentLocomotion.WalkSpeed != speed)
                 {
                     m_componentPlayer.ComponentLocomotion.WalkSpeed = speed;
                     m_componentPlayer.ComponentLocomotion.CreativeFlySpeed = speed;
                 }
-            },
-            delegate
-            {
-                m_componentPlayer.ComponentLocomotion.WalkSpeed = m_componentPlayer.ComponentLocomotion.ValuesDictionary.GetValue<float>("WalkSpeed");
-                m_componentPlayer.ComponentLocomotion.CreativeFlySpeed = m_componentPlayer.ComponentLocomotion.ValuesDictionary.GetValue<float>("CreativeFlySpeed");
-            }
+            },     
+            checkable: true
             ));
             actions.Add(new WEAction("Simple Fill", "Fill", WEAction.ActionType.Operation, delegate
             {
@@ -414,7 +415,7 @@ namespace API_WE_Mod
                 WEAction.ActionType.Extra,
                 delegate
                 {
-                    
+                    WEOperationManager.StartOperation("Rotate", this);
                 },
                 problem: () => ((Point1Set && Point2Set) || BlockMemory != null ? "" : "Need points 1,2 or memory"))
             );
@@ -436,14 +437,13 @@ namespace API_WE_Mod
                 },
                 problem: () => (Point1Set && Point2Set ? "" : "Need points 1,2"))
             );
-            actions.Add(new WEAction("Get specific block",
-                "Obtain\nBlock",
+            actions.Add(new WEAction("Change active item",
+                "Edit\nSlot",
                 WEAction.ActionType.Extra,
                 delegate
                 {
-                    
-                },
-                problem: () => Terrain.ExtractContents(m_componentPlayer.ComponentMiner.ActiveBlockValue) != 0 ? "Need empty selected slot" : ""
+                    DialogsManager.ShowDialog(m_componentPlayer.GameWidget, new ObtainItemDialog(m_componentPlayer));
+                }
             ));
             actions.Add(new WEAction("Fill Memory Banks Data",
                 "Fill\nBanks",
@@ -541,7 +541,7 @@ namespace API_WE_Mod
                     
                 }
             ));
-            actions.Add(new WEAction("Time Control",
+            actions.Add(new WEAction("Time",
                 ContentManager.Get<Texture2D>("WE/stop_time"),
                 WEAction.ActionType.Extra,
                 delegate
@@ -550,7 +550,8 @@ namespace API_WE_Mod
                     extrasOperator.UpdateTimeStop();
                 },
                 checkable: true,
-                activateWhenUnchecked: true
+                activateWhenUnchecked: true,
+                prefix: (enb) => enb ? "Resume" : "Stop"
             ));
             actions.Add(new WEAction("Player Collision",
                 ContentManager.Get<Texture2D>("WE/player_collision"),
@@ -646,7 +647,7 @@ namespace API_WE_Mod
                 WEAction extraAction = (WEAction)c;
                 string problem = extraAction.Problem?.Invoke();
                 LabelWidget labelWidget = new LabelWidget();
-                labelWidget.Text = (extraAction.Checkable ? (extraAction.Checked ? LanguageControl.Disable : LanguageControl.Enable) + " " : "") + extraAction.Name + (string.IsNullOrEmpty(problem) ? "" : $" ({problem})");
+                labelWidget.Text = (extraAction.Checkable ? extraAction.Prefix(extraAction.Checked) + " " : "") + extraAction.Name + (string.IsNullOrEmpty(problem) ? "" : $" ({problem})");
                 labelWidget.Color = string.IsNullOrEmpty(problem) ? Color.White : Color.Gray*0.9f;
                 int horizontalAlignment = 1;
                 labelWidget.HorizontalAlignment = (WidgetAlignment) horizontalAlignment;

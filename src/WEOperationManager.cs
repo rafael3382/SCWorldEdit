@@ -241,6 +241,28 @@ public static class WEOperationManager
         }
     }
     
+    public static void Rotate(TerrainRaycastResult point1, TerrainRaycastResult point2, WEUser user)
+    {
+        int startX = MathUtils.Min(point1.CellFace.X, point2.CellFace.X);
+        int endX = MathUtils.Max(point1.CellFace.X, point2.CellFace.X);
+        int startY = MathUtils.Min(point1.CellFace.Y, point2.CellFace.Y);
+        int endY = MathUtils.Max(point1.CellFace.Y, point2.CellFace.Y);
+        int startZ = MathUtils.Min(point1.CellFace.Z, point2.CellFace.Z);
+        int endZ = MathUtils.Max(point1.CellFace.Z, point2.CellFace.Z);
+
+        for (int x = startX; x <= endX; x++)
+        {
+            for (int y = startY; y <= endY; y++)
+            {
+                for (int z = startZ; z <= endZ; z++)
+                {
+                    int value = m_subsystemTerrain.Terrain.GetCellValue(x, y, z);
+                    SetCell(x, y, z, value);
+                }
+            }
+        }
+    }
+    
     public static void Fill(TerrainRaycastResult point1, TerrainRaycastResult point2, WEUser user)
     {
         int startX = MathUtils.Min(point1.CellFace.X, point2.CellFace.X);

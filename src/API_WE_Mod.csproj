@@ -40,13 +40,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Engine">
-      <HintPath>..\..\..\..\OneDrive\Documentos\SCApi\1.44\Engine.dll</HintPath>
+      <HintPath>/storage/emulated/0/SurvivalCraft2.3/__MyMods/zReference/1.44/Engine.dll</HintPath>
     </Reference>
     <Reference Include="EntitySystem">
-      <HintPath>..\..\..\..\OneDrive\Documentos\SCApi\1.44\EntitySystem.dll</HintPath>
+      <HintPath>/storage/emulated/0/SurvivalCraft2.3/__MyMods/zReference/1.44/EntitySystem.dll</HintPath>
     </Reference>
     <Reference Include="Survivalcraft">
-      <HintPath>..\..\..\..\OneDrive\Documentos\SCApi\1.44\Survivalcraft.exe</HintPath>
+      <HintPath>/storage/emulated/0/SurvivalCraft2.3/__MyMods/zReference/1.44/Survivalcraft.exe</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -70,6 +70,7 @@
     <Compile Include="Maze.cs" />
     <Compile Include="ModifyWorldDialog.cs" />
     <Compile Include="Mountain.cs" />
+    <Compile Include="ObtainItemDialog.cs" />
     <Compile Include="OneKeyFormat.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="Prism.cs" />

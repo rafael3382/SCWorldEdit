@@ -202,7 +202,7 @@ public class WorldEditIntroFormat : IBuildFormat
 		    for (int i=0; i<inv.Value.m_slots.Count; i++)
 		    {
 		        ComponentInventoryBase.Slot slot = inv.Value.m_slots[i];
-		        if (slot.Value == 0)
+		        if (slot.Value == 0 || slot.Count <= 0)
 		            continue;
 		        bin.Write(i);
 		        bin.Write(slot.Value);
